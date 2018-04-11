@@ -1,0 +1,27 @@
+{
+  "name": "polus/adr",
+  "description": "base for my version of adr",
+  "homepage": "https://github.com/polusphp/adr",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andreas Sundqvist",
+      "email": "andreas@oak-valley.se"
+    }
+  ],
+  "require": {
+    "php": ">=7.2.0",
+    "psr/http-message": "^1.0",
+    "psr/http-server-middleware": "^1.0",
+    "http-interop/http-factory": "^0.3.0",
+    "psr/container": "^1.0",
+    "aura/payload": "~3.0",
+    "polus/router": "^1.0",
+    "polus/middleware-dispatcher": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Polus\\Adr\\": "src/"
+    }
+  }
+}
