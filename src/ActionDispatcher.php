@@ -90,6 +90,9 @@ class ActionDispatcher
                         'code' => $de->getCode(),
                     ]
                 ]);
+                $payload->setExtras([
+                    'exception' => $de
+                ]);
                 $payload->setInput($input ?? []);
             }
         } else {
