@@ -7,9 +7,9 @@ use Polus\Adr\Interfaces\ActionInterface;
 
 abstract class AbstractAction implements ActionInterface
 {
-    protected $input = null;
-    protected $responder = null;
-    protected $domain = null;
+    protected $input;
+    protected $responder;
+    protected $domain;
     protected $middlewares = [];
 
 

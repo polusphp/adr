@@ -20,7 +20,7 @@ class CliResponseHandler implements ResponseHandlerInterface
     {
         $this->response = $response;
 
-        if (count($response->getHeaders())) {
+        if (\count($response->getHeaders())) {
             echo "Headers: \n";
             foreach ($response->getHeaders() as $header => $values) {
                 echo "\t$header: ".implode(', ', $values)."\n";

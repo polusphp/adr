@@ -37,7 +37,7 @@ class ActionDispatcher
 
     public function dispatch(ActionInterface $action, ServerRequestInterface $request): ResponseInterface
     {
-        if (count($action->getMiddlewares())) {
+        if (\count($action->getMiddlewares())) {
             $middlewareDispatcher = $this->middlewareFactory->newInstance();
             $middlewareDispatcher->addMiddlewares($action->getMiddlewares());
 
@@ -76,7 +76,7 @@ class ActionDispatcher
             $domain = $this->resolver->resolveDomain($action->getDomain());
         }
 
-        if (is_callable($domain)) {
+        if (\is_callable($domain)) {
             try {
                 $input = $this->resolver->resolveInput($action->getInput());
                 $payload = $domain($input($request));
@@ -98,9 +98,9 @@ class ActionDispatcher
         }
 
         $responder = $this->resolver->resolveResponder($action->getResponder());
-        if ($responder instanceof ResponderInterface || is_callable($responder)) {
+        if ($responder instanceof ResponderInterface || \is_callable($responder)) {
             return $responder($request, $this->responseFactory->createResponse(), $payload);
         }
-        throw new \RuntimeException("Invalid responder. Responder must implement ResponderInterface or be callable");
+        throw new \RuntimeException('Invalid responder. Responder must implement ResponderInterface or be callable');
     }
 }

@@ -32,10 +32,8 @@ class ActionDispatcherMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute('route');
-        if ($route instanceof RouteInterface) {
-            if ($route->getStatus() === RouterDispatcherInterface::FOUND) {
-                return $this->actionDispatcher->dispatch($route->getHandler(), $request);
-            }
+        if ($route instanceof RouteInterface && $route->getStatus() === RouterDispatcherInterface::FOUND) {
+            return $this->actionDispatcher->dispatch($route->getHandler(), $request);
         }
 
         return $this->responseFactory->createResponse(404);
