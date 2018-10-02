@@ -5,12 +5,12 @@ namespace Polus\Adr;
 
 use Aura\Payload\Payload;
 use Aura\Payload_Interface\PayloadStatus;
-use Interop\Http\Factory\ResponseFactoryInterface;
 use Polus\Adr\Interfaces\ActionInterface;
 use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
 use Polus\MiddlewareDispatcher\DispatcherInterface as MiddlewareDispatcherInterface;
 use Polus\Adr\Interfaces\ResolverInterface;
 use Polus\Adr\Interfaces\ResponderInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

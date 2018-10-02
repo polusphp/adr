@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Polus\Adr;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
 use Polus\Adr\Interfaces\ActionInterface;
 use Polus\Adr\Interfaces\ResolverInterface;
 use Polus\Adr\Interfaces\ResponseHandlerInterface;
 use Polus\Router\RouterCollectionInterface;
 use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
 use Polus\MiddlewareDispatcher\DispatcherInterface as MiddlewareDispatcherInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

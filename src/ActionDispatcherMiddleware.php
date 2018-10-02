@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Polus\Adr;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
 use Polus\Router\RouteInterface;
 use Polus\Router\RouterDispatcherInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
