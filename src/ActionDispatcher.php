@@ -102,7 +102,18 @@ class ActionDispatcher
 
         $responder = $this->resolver->resolveResponder($action->getResponder());
         if ($responder instanceof ResponderInterface || \is_callable($responder)) {
-            return $responder($request, $this->responseFactory->createResponse(), $payload);
+            $response = $responder($request, $this->responseFactory->createResponse(), $payload);
+
+            if (method_exists($action, 'getNextAction')) {
+                $newAction = $action->getNextAction();
+                if ($newAction) {
+                    $request = $request->withAttribute('currentResponse', $response);
+                    $this->dispatch($newAction, $request);
+                }
+           }
+
+           return $response;
+
         }
         throw new \RuntimeException('Invalid responder. Responder must implement ResponderInterface or be callable');
     }
