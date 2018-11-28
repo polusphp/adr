@@ -18,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ActionDispatcher
 {
-    /** @var ResolverInterface  */
+    /** @var ResolverInterface */
     private $resolver;
     /** @var ResponseFactoryInterface */
     private $responseFactory;
@@ -27,8 +27,11 @@ class ActionDispatcher
     /** @var MiddlewareFactoryInterface */
     private $middlewareFactory;
 
-    public function __construct(ResolverInterface $resolver, ResponseFactoryInterface $responseFactory, MiddlewareFactoryInterface $middlewareFactory)
-    {
+    public function __construct(
+        ResolverInterface $resolver,
+        ResponseFactoryInterface $responseFactory,
+        MiddlewareFactoryInterface $middlewareFactory
+    ) {
         $this->resolver = $resolver;
         $this->responseFactory = $responseFactory;
         $this->middlewareDispatcher = $middlewareFactory->newInstance();
@@ -41,20 +44,23 @@ class ActionDispatcher
             $middlewareDispatcher = $this->middlewareFactory->newInstance();
             $middlewareDispatcher->addMiddlewares($action->getMiddlewares());
 
-            $doAction = function($request) use($action) {
+            $doAction = function ($request) use ($action) {
                 return $this->dispatchAction($action, $request);
             };
 
             $actionHandler = new class ($doAction) implements MiddlewareInterface
             {
                 private $runAction;
+
                 public function __construct($runAction)
                 {
                     $this->runAction = $runAction;
                 }
 
-                public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-                {
+                public function process(
+                    ServerRequestInterface $request,
+                    RequestHandlerInterface $handler
+                ): ResponseInterface {
                     $action = $this->runAction;
                     return $action($request);
                 }
@@ -102,7 +108,17 @@ class ActionDispatcher
 
         $responder = $this->resolver->resolveResponder($action->getResponder());
         if ($responder instanceof ResponderInterface || \is_callable($responder)) {
-            return $responder($request, $this->responseFactory->createResponse(), $payload);
+            $response = $responder($request, $this->responseFactory->createResponse(), $payload);
+
+            if (method_exists($action, 'getNextAction')) {
+                $newAction = $action->getNextAction();
+                if ($newAction) {
+                    $request = $request->withAttribute('currentResponse', $response);
+                    $this->dispatch($newAction, $request);
+                }
+            }
+
+            return $response;
         }
         throw new \RuntimeException('Invalid responder. Responder must implement ResponderInterface or be callable');
     }
