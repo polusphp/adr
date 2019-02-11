@@ -35,6 +35,9 @@ class ActionDispatcherMiddleware implements MiddlewareInterface
         if ($route instanceof RouteInterface && $route->getStatus() === RouterDispatcherInterface::FOUND) {
             return $this->actionDispatcher->dispatch($route->getHandler(), $request);
         }
+        if ($route instanceof RouteInterface && $route->getStatus() === RouterDispatcherInterface::METHOD_NOT_ALLOWED) {
+            return $this->responseFactory->createResponse(405);
+        }
 
         return $this->responseFactory->createResponse(404);
     }
