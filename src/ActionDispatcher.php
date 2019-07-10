@@ -136,4 +136,9 @@ class ActionDispatcher
 
         return $payload;
     }
+
+    protected function getResponseFactory(): ResponseFactoryInterface
+    {
+        return $this->responseFactory;
+    }
 }
