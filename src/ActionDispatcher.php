@@ -3,6 +3,7 @@
 namespace Polus\Adr;
 
 use Aura\Payload\Payload;
+use Aura\Payload_Interface\PayloadInterface;
 use Aura\Payload_Interface\PayloadStatus;
 use Polus\Adr\Interfaces\ActionInterface;
 use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
@@ -82,19 +83,14 @@ class ActionDispatcher
                 $payload = $domain($input($request));
             }
             catch (\DomainException $de) {
-                $payload = new Payload();
-                $payload->setStatus(PayloadStatus::FAILURE);
-                $payload->setMessages($de->getMessage());
-                $payload->setOutput([
-                    'exception' => [
-                        'message' => $de->getMessage(),
-                        'code' => $de->getCode(),
-                    ]
-                ]);
-                $payload->setExtras([
-                    'exception' => $de
-                ]);
-                $payload->setInput($input ?? []);
+                $result = $this->handleInputException($de);
+                if ($result instanceof ResponseInterface) {
+                    return $result;
+                }
+
+                if ($result instanceof Payload) {
+                    $payload = $result->setInput($input ?? []);
+                }
             }
         }
         else {
@@ -117,5 +113,27 @@ class ActionDispatcher
             return $response;
         }
         throw new \RuntimeException('Invalid responder. Responder must implement ResponderInterface or be callable');
+    }
+
+    /**
+     * @param \Throwable $e
+     * @return PayloadInterface|ResponseInterface
+     */
+    protected function handleInputException(\Throwable $e)
+    {
+        $payload = new Payload();
+        $payload->setStatus(PayloadStatus::FAILURE);
+        $payload->setMessages($e->getMessage());
+        $payload->setOutput([
+            'exception' => [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]
+        ]);
+        $payload->setExtras([
+            'exception' => $e
+        ]);
+
+        return $payload;
     }
 }
