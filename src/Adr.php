@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Polus\Adr;
 
@@ -44,14 +43,6 @@ class Adr
     /** @var RouterCollectionInterface */
     private $routerContainer;
 
-    /**
-     * Adr constructor.
-     * @param ResponseFactoryInterface $responseFactory
-     * @param ResolverInterface $actionResolver
-     * @param RouterCollectionInterface $routerContainer
-     * @param ResponseHandlerInterface $responseHandler
-     * @param MiddlewareFactoryInterface $middlewareFactory
-     */
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         ResolverInterface $actionResolver,

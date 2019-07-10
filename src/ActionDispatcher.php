@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Polus\Adr;
 
@@ -7,7 +6,6 @@ use Aura\Payload\Payload;
 use Aura\Payload_Interface\PayloadStatus;
 use Polus\Adr\Interfaces\ActionInterface;
 use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
-use Polus\MiddlewareDispatcher\DispatcherInterface as MiddlewareDispatcherInterface;
 use Polus\Adr\Interfaces\ResolverInterface;
 use Polus\Adr\Interfaces\ResponderInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -22,8 +20,6 @@ class ActionDispatcher
     private $resolver;
     /** @var ResponseFactoryInterface */
     private $responseFactory;
-    /** @var MiddlewareDispatcherInterface */
-    private $middlewareDispatcher;
     /** @var MiddlewareFactoryInterface */
     private $middlewareFactory;
 
@@ -34,7 +30,6 @@ class ActionDispatcher
     ) {
         $this->resolver = $resolver;
         $this->responseFactory = $responseFactory;
-        $this->middlewareDispatcher = $middlewareFactory->newInstance();
         $this->middlewareFactory = $middlewareFactory;
     }
 
@@ -72,7 +67,6 @@ class ActionDispatcher
         }
 
         return $this->dispatchAction($action, $request);
-
     }
 
     private function dispatchAction(ActionInterface $action, ServerRequestInterface $request): ResponseInterface
@@ -86,7 +80,8 @@ class ActionDispatcher
             try {
                 $input = $this->resolver->resolveInput($action->getInput());
                 $payload = $domain($input($request));
-            } catch (\DomainException $de) {
+            }
+            catch (\DomainException $de) {
                 $payload = new Payload();
                 $payload->setStatus(PayloadStatus::FAILURE);
                 $payload->setMessages($de->getMessage());
@@ -101,7 +96,8 @@ class ActionDispatcher
                 ]);
                 $payload->setInput($input ?? []);
             }
-        } else {
+        }
+        else {
             $payload = new Payload();
             $payload->setStatus(PayloadStatus::SUCCESS);
         }
