@@ -14,10 +14,10 @@ class ActionDispatcherMiddleware implements MiddlewareInterface
 {
     /** @var ResponseFactoryInterface */
     private $responseFactory;
-    /** @var ActionDispatcher */
+    /** @var ActionDispatcherInterface */
     private $actionDispatcher;
 
-    public function __construct(ActionDispatcher $actionDispatcher, ResponseFactoryInterface $responseFactory)
+    public function __construct(ActionDispatcherInterface $actionDispatcher, ResponseFactoryInterface $responseFactory)
     {
         $this->responseFactory = $responseFactory;
         $this->actionDispatcher = $actionDispatcher;

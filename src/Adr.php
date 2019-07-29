@@ -31,9 +31,6 @@ class Adr
     /** @var MiddlewareDispatcherInterface */
     private $middlewareDispatcher;
 
-    /** @var ResolverInterface */
-    private $actionResolver;
-
     /** @var MiddlewareFactoryInterface */
     private $middlewareFactory;
 
@@ -42,19 +39,22 @@ class Adr
 
     /** @var RouterCollectionInterface */
     private $routerContainer;
+    /** @var ActionDispatcherFactory */
+    private $actionDispatcherFactory;
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         ResolverInterface $actionResolver,
         RouterCollectionInterface $routerContainer,
         ResponseHandlerInterface $responseHandler,
-        MiddlewareFactoryInterface $middlewareFactory
+        MiddlewareFactoryInterface $middlewareFactory,
+        ?ActionDispatcherFactory $actionDispatcher = null
     ) {
         $this->responseFactory = $responseFactory;
-        $this->actionResolver = $actionResolver;
         $this->middlewareFactory = $middlewareFactory;
         $this->responseHandler = $responseHandler;
         $this->routerContainer = $routerContainer;
+        $this->actionDispatcherFactory = $actionDispatcher ?? new ActionDispatcherFactory($actionResolver, $responseFactory);
     }
 
     public function __call($name, $arguments)
@@ -69,11 +69,7 @@ class Adr
         $this->middlewareDispatcher = $this->middlewareFactory->newConfiguredInstance();
         $this->middlewareDispatcher->addMiddleware(
             new ActionDispatcherMiddleware(
-                new ActionDispatcher(
-                    $this->actionResolver,
-                    $this->responseFactory,
-                    $this->middlewareFactory
-                ),
+                $this->actionDispatcherFactory->createActionDispatcher($this->middlewareFactory),
                 $this->responseFactory
             )
         );
