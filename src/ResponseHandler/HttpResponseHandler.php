@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class HttpResponseHandler implements ResponseHandlerInterface
 {
+    public const PASSTHRU = 'passthru';
+
     /** @var ResponseInterface */
     private $response;
 
@@ -25,7 +27,13 @@ class HttpResponseHandler implements ResponseHandlerInterface
 
         header("HTTP/{$version} {$status} {$phrase}");
 
+        $doPassthru = false;
+
         foreach ($response->getHeaders() as $name => $values) {
+            if ($name === self::PASSTHRU) {
+                $doPassthru = true;
+                continue;
+            }
             $name = str_replace('-', ' ', $name);
             $name = ucwords($name);
             $name = str_replace(' ', '-', $name);
@@ -35,9 +43,15 @@ class HttpResponseHandler implements ResponseHandlerInterface
         }
 
         $stream = $response->getBody();
-        $stream->rewind();
-        while (! $stream->eof()) {
-            echo $stream->read(8192);
+
+        if ($doPassthru) {
+            fpassthru($stream->detach());
+        }
+        else {
+            $stream->rewind();
+            while (!$stream->eof()) {
+                echo $stream->read(8192);
+            }
         }
     }
 }
