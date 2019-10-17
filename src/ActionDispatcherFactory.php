@@ -14,8 +14,6 @@ final class ActionDispatcherFactory
     private $dispatcherFactory;
     /** @var ResponseFactoryInterface */
     private $responseFactory;
-    /** @var MiddlewareFactoryInterface */
-    private $middlewareFactory;
 
     public function __construct(
         ResolverInterface $actionResolver,

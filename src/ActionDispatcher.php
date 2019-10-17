@@ -89,6 +89,7 @@ class ActionDispatcher implements ActionDispatcherInterface
                 }
 
                 if ($result instanceof Payload) {
+                	//todo refactor how we set input
                     $payload = $result->setInput($input ?? []);
                 }
             }

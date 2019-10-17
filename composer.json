@@ -19,9 +19,19 @@
     "polus/router": "^1.0",
     "polus/middleware-dispatcher": "^2.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0",
+    "polus/relay-middleware-dispatcher": "^2.0",
+    "nyholm/psr7": "^1.0"
+  },
   "autoload": {
     "psr-4": {
       "Polus\\Adr\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Polus\\Tests\\Adr\\": "tests/"
     }
   }
 }

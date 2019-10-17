@@ -11,7 +11,6 @@ abstract class AbstractAction implements ActionInterface
     protected $domain;
     protected $middlewares = [];
 
-
     /**
      * @return mixed
      */
