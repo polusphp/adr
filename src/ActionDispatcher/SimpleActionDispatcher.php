@@ -1,55 +1,34 @@
 <?php declare(strict_types=1);
 
-namespace Polus\Adr;
+namespace Polus\Adr\ActionDispatcher;
 
 use Aura\Payload\Payload;
 use Aura\Payload_Interface\PayloadInterface;
 use Aura\Payload_Interface\PayloadStatus;
-use Polus\Adr\ActionDispatcher\MiddlewareActionDispatcher;
-use Polus\Adr\ActionDispatcher\SimpleActionDispatcher;
+use Polus\Adr\ActionDispatcherInterface;
 use Polus\Adr\Interfaces\ActionInterface;
-use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
 use Polus\Adr\Interfaces\ResolverInterface;
 use Polus\Adr\Interfaces\ResponderInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * @deprecated
- */
-class ActionDispatcher implements ActionDispatcherInterface
+final class SimpleActionDispatcher implements ActionDispatcherInterface
 {
     /** @var ResolverInterface */
     private $resolver;
     /** @var ResponseFactoryInterface */
     private $responseFactory;
-    /** @var MiddlewareFactoryInterface */
-    private $middlewareFactory;
 
     public function __construct(
         ResolverInterface $resolver,
-        ResponseFactoryInterface $responseFactory,
-        MiddlewareFactoryInterface $middlewareFactory
+        ResponseFactoryInterface $responseFactory
     ) {
         $this->resolver = $resolver;
         $this->responseFactory = $responseFactory;
-        $this->middlewareFactory = $middlewareFactory;
     }
 
     public function dispatch(ActionInterface $action, ServerRequestInterface $request): ResponseInterface
-    {
-        if (\count($action->getMiddlewares())) {
-            $dispatcher = new MiddlewareActionDispatcher($this, $this->middlewareFactory);
-            return $dispatcher->dispatch($action, $request);
-        }
-
-        return $this->dispatchAction($action, $request);
-    }
-
-    private function dispatchAction(ActionInterface $action, ServerRequestInterface $request): ResponseInterface
     {
         $domain = null;
         if ($action->getDomain()) {
