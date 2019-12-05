@@ -40,7 +40,7 @@ final class SimpleActionDispatcher implements ActionDispatcherInterface
                 $input = $this->resolver->resolveInput($action->getInput());
                 $payload = $domain($input($request));
             }
-            catch (\DomainException $de) {
+            catch (\Throwable $de) {
                 $result = $this->handleInputException($de);
                 if ($result instanceof ResponseInterface) {
                     return $result;
@@ -80,6 +80,9 @@ final class SimpleActionDispatcher implements ActionDispatcherInterface
      */
     protected function handleInputException(\Throwable $e)
     {
+        if (!$e instanceof \DomainException && !$e instanceof \InvalidArgumentException) {
+            throw $e;
+        }
         $payload = new Payload();
         $payload->setStatus(PayloadStatus::FAILURE);
         $payload->setMessages($e->getMessage());
