@@ -2,13 +2,12 @@
 
 namespace Polus\Adr\ResponseHandler;
 
-use Polus\Adr\Interfaces\ResponseHandlerInterface;
+use Polus\Adr\Interfaces\ResponseHandler;
 use Psr\Http\Message\ResponseInterface;
 
-class CliResponseHandler implements ResponseHandlerInterface
+class CliResponseHandler implements ResponseHandler
 {
-    /** @var ResponseInterface */
-    private $response;
+    private ResponseInterface $response;
 
     public function getResponse(): ResponseInterface
     {
@@ -22,15 +21,15 @@ class CliResponseHandler implements ResponseHandlerInterface
         if (\count($response->getHeaders())) {
             echo "Headers: \n";
             foreach ($response->getHeaders() as $header => $values) {
-                echo "\t$header: ".implode(', ', $values)."\n";
+                echo "\t$header: " . implode(', ', $values) . "\n";
             }
         }
 
-        echo "\nResponse status: " . $response->getStatusCode()."\n";
+        echo "\nResponse status: " . $response->getStatusCode() . "\n";
 
         $stream = $response->getBody();
         $stream->rewind();
-        while (! $stream->eof()) {
+        while (!$stream->eof()) {
             echo $stream->read(8192);
         }
     }

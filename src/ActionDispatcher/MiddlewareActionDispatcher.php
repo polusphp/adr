@@ -2,32 +2,31 @@
 
 namespace Polus\Adr\ActionDispatcher;
 
-use Polus\Adr\ActionDispatcherInterface;
-use Polus\Adr\Interfaces\ActionInterface;
-use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactoryInterface;
+use Polus\Adr\Interfaces\ActionDispatcher;
+use Polus\Adr\Interfaces\Action;
+use Polus\Adr\Interfaces\MiddlewareAwareAction;
+use Polus\MiddlewareDispatcher\FactoryInterface as MiddlewareFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class MiddlewareActionDispatcher implements ActionDispatcherInterface
+final class MiddlewareActionDispatcher implements ActionDispatcher
 {
-    /** @var MiddlewareFactoryInterface */
-    private $middlewareFactory;
-    /** @var ActionDispatcherInterface */
-    private $actionDispatcher;
+    private MiddlewareFactory $middlewareFactory;
+    private ActionDispatcher $actionDispatcher;
 
     public function __construct(
-        ActionDispatcherInterface $actionDispatcher,
-        MiddlewareFactoryInterface $middlewareFactory
+        ActionDispatcher $actionDispatcher,
+        MiddlewareFactory $middlewareFactory
     ) {
         $this->middlewareFactory = $middlewareFactory;
         $this->actionDispatcher = $actionDispatcher;
     }
 
-    public function dispatch(ActionInterface $action, ServerRequestInterface $request): ResponseInterface
+    public function dispatch(Action $action, ServerRequestInterface $request): ResponseInterface
     {
-        if (\count($action->getMiddlewares())) {
+        if ($action instanceof MiddlewareAwareAction && \count($action->getMiddlewares())) {
             $middlewareDispatcher = $this->middlewareFactory->newInstance();
             $middlewareDispatcher->addMiddlewares($action->getMiddlewares());
 

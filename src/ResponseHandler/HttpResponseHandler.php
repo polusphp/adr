@@ -2,15 +2,14 @@
 
 namespace Polus\Adr\ResponseHandler;
 
-use Polus\Adr\Interfaces\ResponseHandlerInterface;
+use Polus\Adr\Interfaces\ResponseHandler;
 use Psr\Http\Message\ResponseInterface;
 
-class HttpResponseHandler implements ResponseHandlerInterface
+class HttpResponseHandler implements ResponseHandler
 {
     public const PASSTHRU = 'passthru';
 
-    /** @var ResponseInterface */
-    private $response;
+    private ResponseInterface $response;
 
     public function getResponse(): ResponseInterface
     {

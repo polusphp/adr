@@ -1,9 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Polus\Adr;
+namespace Polus\Adr\Middleware;
 
-use Polus\Router\RouteInterface;
-use Polus\Router\RouterDispatcherInterface;
+use Polus\Adr\Interfaces\ActionDispatcher;
+use Polus\Router\Route;
+use Polus\Router\RouterDispatcher;
+use Polus\Router\RouterMiddleware;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,12 +14,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ActionDispatcherMiddleware implements MiddlewareInterface
 {
-    /** @var ResponseFactoryInterface */
-    private $responseFactory;
-    /** @var ActionDispatcherInterface */
-    private $actionDispatcher;
+    private ResponseFactoryInterface $responseFactory;
+    private ActionDispatcher $actionDispatcher;
 
-    public function __construct(ActionDispatcherInterface $actionDispatcher, ResponseFactoryInterface $responseFactory)
+    public function __construct(ActionDispatcher $actionDispatcher, ResponseFactoryInterface $responseFactory)
     {
         $this->responseFactory = $responseFactory;
         $this->actionDispatcher = $actionDispatcher;
@@ -25,11 +25,11 @@ class ActionDispatcherMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $route = $request->getAttribute('route');
-        if ($route instanceof RouteInterface && $route->getStatus() === RouterDispatcherInterface::FOUND) {
+        $route = $request->getAttribute(RouterMiddleware::ATTRIBUTE_KEY);
+        if ($route instanceof Route && $route->getStatus() === RouterDispatcher::FOUND) {
             return $this->actionDispatcher->dispatch($route->getHandler(), $request);
         }
-        if ($route instanceof RouteInterface && $route->getStatus() === RouterDispatcherInterface::METHOD_NOT_ALLOWED) {
+        if ($route instanceof Route && $route->getStatus() === RouterDispatcher::METHOD_NOT_ALLOWED) {
             return $this->responseFactory->createResponse(405);
         }
 

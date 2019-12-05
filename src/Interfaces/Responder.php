@@ -6,7 +6,7 @@ use Aura\Payload_Interface\PayloadInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-interface ResponderInterface
+interface Responder
 {
     public function __invoke(
         ServerRequestInterface $request,

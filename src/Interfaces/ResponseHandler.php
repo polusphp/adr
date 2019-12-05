@@ -4,7 +4,7 @@ namespace Polus\Adr\Interfaces;
 
 use Psr\Http\Message\ResponseInterface;
 
-interface ResponseHandlerInterface
+interface ResponseHandler
 {
     public function getResponse(): ResponseInterface;
     

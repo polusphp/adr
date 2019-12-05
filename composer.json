@@ -10,13 +10,12 @@
     }
   ],
   "require": {
-    "php": ">=7.2.0",
+    "php": ">=7.4.0",
+    "aura/payload": "~3.0",
     "psr/http-message": "^1.0",
     "psr/http-server-middleware": "^1.0",
     "psr/http-factory": "^1.0",
-    "psr/container": "^1.0",
-    "aura/payload": "~3.0",
-    "polus/router": "^1.0",
+    "polus/router": "^2.0",
     "polus/middleware-dispatcher": "^2.0"
   },
   "require-dev": {

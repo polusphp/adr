@@ -42,9 +42,9 @@ use Http\Factory\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Polus\Adr\Adr;
-use Polus\Adr\AbstractAction;
-use Polus\Adr\Interfaces\ResolverInterface;
-use Polus\Adr\Interfaces\ResponderInterface;
+use Polus\Adr\AbstractDomainAction;
+use Polus\Adr\Interfaces\Resolver;
+use Polus\Adr\Interfaces\Responder;
 use Polus\Adr\ResponseHandler\HttpResponseHandler;
 use Polus\Router\RouterMiddleware;
 use Polus\Router\AuraRouter\RouterCollection;
@@ -54,7 +54,7 @@ $routerContainer = new RouterContainer();
 $routerCollection = new RouterCollection($routerContainer->getMap());
 $routerDispatcher = new Polus\Router\AuraRouter\Dispatcher($routerContainer);
 
-$actionResolver =  new class implements ResolverInterface {
+$actionResolver =  new class implements Resolver {
     //..
 };
 
@@ -73,7 +73,7 @@ $adr = new Adr(
 );
 
 //Define routes and actions
-class Responder implements ResponderInterface
+class Responder implements Responder
 {
     public function __invoke(
         ServerRequestInterface $request,
@@ -85,7 +85,7 @@ class Responder implements ResponderInterface
     }
 }
 
-$adr->get('/', new class extends AbstractAction {
+$adr->get('/', new class extends AbstractDomainAction {
     protected $responder = Responder::class;
 });
 
