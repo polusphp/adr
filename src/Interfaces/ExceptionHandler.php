@@ -2,13 +2,13 @@
 
 namespace Polus\Adr\Interfaces;
 
-use Aura\Payload_Interface\PayloadInterface;
+use PayloadInterop\DomainPayload;
 use Psr\Http\Message\ResponseInterface;
 
 interface ExceptionHandler
 {
     /**
-     * @return PayloadInterface|ResponseInterface
+     * @return DomainPayload|ResponseInterface
      */
     public function handle(\Throwable $e);
 }

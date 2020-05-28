@@ -2,7 +2,7 @@
 
 namespace Polus\Adr\Interfaces;
 
-use Aura\Payload_Interface\PayloadInterface;
+use PayloadInterop\DomainPayload;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -11,6 +11,6 @@ interface Responder
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        PayloadInterface $payload
+        DomainPayload $payload
     ): ResponseInterface;
 }

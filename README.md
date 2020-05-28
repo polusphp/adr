@@ -35,19 +35,7 @@ See [polus/polus-adr](https://github.com/polusphp/polus-adr) for version 1 and 2
 <?php
 
 
-use Aura\Payload_Interface\PayloadInterface;
-use Aura\Router\RouterContainer;
-use Http\Factory\Diactoros\ResponseFactory;
-use Http\Factory\Diactoros\ServerRequestFactory;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Polus\Adr\Adr;
-use Polus\Adr\AbstractDomainAction;
-use Polus\Adr\Interfaces\Resolver;
-use Polus\Adr\Interfaces\Responder;
-use Polus\Adr\ResponseHandler\HttpResponseHandler;
-use Polus\Router\RouterMiddleware;
-use Polus\Router\AuraRouter\RouterCollection;
+use Aura\Payload_Interface\PayloadInterface;use Aura\Router\RouterContainer;use Http\Factory\Diactoros\ResponseFactory;use Http\Factory\Diactoros\ServerRequestFactory;use Polus\Adr\Actions\AbstractDomainAction;use Polus\Adr\Adr;use Polus\Adr\Interfaces\Resolver;use Polus\Adr\ResponseHandler\HttpResponseHandler;use Polus\Router\AuraRouter\RouterCollection;use Polus\Router\RouterMiddleware;use Psr\Http\Message\ResponseInterface;use Psr\Http\Message\ServerRequestInterface;
 
 $responseFactory = new \Http\Factory\Diactoros\ResponseFactory();
 $routerContainer = new RouterContainer();

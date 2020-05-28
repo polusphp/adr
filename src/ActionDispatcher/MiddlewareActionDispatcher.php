@@ -36,9 +36,10 @@ final class MiddlewareActionDispatcher implements ActionDispatcher
 
             $actionHandler = new class ($doAction) implements MiddlewareInterface
             {
+                /** @var callable */
                 private $runAction;
 
-                public function __construct($runAction)
+                public function __construct(callable $runAction)
                 {
                     $this->runAction = $runAction;
                 }

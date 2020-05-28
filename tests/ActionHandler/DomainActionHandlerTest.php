@@ -1,16 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Polus\Tests\Adr;
+namespace Polus\Tests\Adr\ActionHandler;
 
-use Aura\Payload\Payload;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
+use PayloadInterop\DomainPayload;
 use PHPUnit\Framework\TestCase;
-use Polus\Adr\AbstractDomainAction;
-use Polus\Adr\ActionDispatcher\DomainActionDispatcher;
+use Polus\Adr\ActionDispatcher\HandlerActionDispatcher;
 use Polus\Adr\ActionDispatcher\MiddlewareActionDispatcher;
+use Polus\Adr\ActionHandler\DomainActionHandler;
+use Polus\Adr\Actions\AbstractDomainAction;
 use Polus\Adr\DefaultExceptionHandler;
+use Polus\Adr\EmptyDomainPayload;
+use Polus\Adr\ExceptionDomainPayload;
 use Polus\Adr\Interfaces\Resolver;
 use Polus\Adr\Interfaces\Responder;
 use Polus\MiddlewareDispatcher\DispatcherInterface;
@@ -22,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class DomainActionDispatcherTest extends TestCase
+class DomainActionHandlerTest extends TestCase
 {
     private function getMiddlewareFactory(): MiddlewareFactoryInterface
     {
@@ -45,26 +48,27 @@ class DomainActionDispatcherTest extends TestCase
         $testResponse = new Response();
 
         $responder = $this->createMock(Responder::class);
-        $responder->method('__invoke')->willReturn($testResponse);
+        $responder
+            ->method('__invoke')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->isInstanceOf(EmptyDomainPayload::class)
+            )
+            ->willReturn($testResponse);
 
         $resolver = $this->createMock(Resolver::class);
-        $resolver
-            ->method('resolve')
-            ->willThrowException(new \DomainException());
         $resolver
             ->method('resolveResponder')
             ->willReturn($responder);
 
-        $dispatcher = new DomainActionDispatcher(
+        $dispatcher = HandlerActionDispatcher::default(
             $resolver,
             new Psr17Factory(),
-            new DefaultExceptionHandler(),
         );
 
         $response = $dispatcher->dispatch(
-            new class extends AbstractDomainAction
-            {
-            },
+            new class extends AbstractDomainAction {},
             new ServerRequest('GET', '/')
         );
 
@@ -86,10 +90,11 @@ class DomainActionDispatcherTest extends TestCase
             ->willReturn($responder);
 
         $dispatcher = new MiddlewareActionDispatcher(
-            new DomainActionDispatcher(
+            new HandlerActionDispatcher(
                 $resolver,
                 new Psr17Factory(),
                 new DefaultExceptionHandler(),
+                new DomainActionHandler($resolver),
             ),
             $this->getMiddlewareFactory(),
         );
@@ -105,7 +110,7 @@ class DomainActionDispatcherTest extends TestCase
                             ServerRequestInterface $request,
                             RequestHandlerInterface $handler
                         ): ResponseInterface {
-                            DomainActionDispatcherTest::assertTrue(true);
+                            DomainActionHandlerTest::assertTrue(true);
 
                             return $handler->handle($request);
                         }
@@ -124,13 +129,13 @@ class DomainActionDispatcherTest extends TestCase
         $responder = $this->createMock(Responder::class);
         $responder->method('__invoke')->willReturn($testResponse);
 
-        $testPayload = $this->createMock(Payload::class);
+        $testPayload = $this->createMock(DomainPayload::class);
 
         $resolver = new class ($responder, $testPayload) implements Resolver {
             private Responder $responder;
-            private Payload $payload;
+            private DomainPayload $payload;
 
-            public function __construct(Responder $responder, Payload $payload)
+            public function __construct(Responder $responder, DomainPayload $payload)
             {
                 $this->responder = $responder;
                 $this->payload = $payload;
@@ -154,10 +159,11 @@ class DomainActionDispatcherTest extends TestCase
             }
         };
 
-        $dispatcher = new DomainActionDispatcher(
+        $dispatcher = new HandlerActionDispatcher(
             $resolver,
             new Psr17Factory(),
             new DefaultExceptionHandler(),
+            new DomainActionHandler($resolver),
         );
 
         $response = $dispatcher->dispatch(
@@ -165,6 +171,46 @@ class DomainActionDispatcherTest extends TestCase
             {
                 protected ?string $domain = 'domain';
                 protected ?string $input = 'input';
+            },
+            new ServerRequest('GET', '/')
+        );
+
+        $this->assertSame($testResponse, $response);
+    }
+
+    public function testResolveException(): void
+    {
+        $testResponse = new Response();
+
+        $responder = $this->createMock(Responder::class);
+        $responder
+            ->method('__invoke')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->isInstanceOf(ExceptionDomainPayload::class)
+            )
+            ->willReturn($testResponse);
+
+        $resolver = $this->createMock(Resolver::class);
+        $resolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->willThrowException(new \DomainException('Resolver failed'));
+        $resolver
+            ->method('resolveResponder')
+            ->willReturn($responder);
+
+        $dispatcher = new HandlerActionDispatcher(
+            $resolver,
+            new Psr17Factory(),
+            new DefaultExceptionHandler(),
+            new DomainActionHandler($resolver),
+        );
+
+        $response = $dispatcher->dispatch(
+            new class extends AbstractDomainAction {
+                protected ?string $domain = 'error';
             },
             new ServerRequest('GET', '/')
         );

@@ -2,35 +2,20 @@
 
 namespace Polus\Adr;
 
-use Aura\Payload\Payload;
-use Aura\Payload_Interface\PayloadInterface;
-use Aura\Payload_Interface\PayloadStatus;
+use PayloadInterop\DomainPayload;
 use Polus\Adr\Interfaces\ExceptionHandler;
 use Psr\Http\Message\ResponseInterface;
 
 final class DefaultExceptionHandler implements ExceptionHandler
 {
     /**
-     * @return PayloadInterface|ResponseInterface
+     * @return DomainPayload|ResponseInterface
      */
     public function handle(\Throwable $e)
     {
         if (!$e instanceof \DomainException && !$e instanceof \InvalidArgumentException) {
             throw $e;
         }
-        $payload = new Payload();
-        $payload->setStatus(PayloadStatus::FAILURE);
-        $payload->setMessages($e->getMessage());
-        $payload->setOutput([
-            'exception' => [
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-            ]
-        ]);
-        $payload->setExtras([
-            'exception' => $e
-        ]);
-
-        return $payload;
+        return new ExceptionDomainPayload($e);
     }
 }
