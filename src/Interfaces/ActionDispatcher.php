@@ -2,7 +2,6 @@
 
 namespace Polus\Adr\Interfaces;
 
-use Polus\Adr\Interfaces\Action;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
