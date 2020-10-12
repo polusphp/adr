@@ -2,10 +2,12 @@
 
 namespace Polus\Tests\Adr\ActionHandler;
 
+use DomainException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PayloadInterop\DomainPayload;
 use PHPUnit\Framework\TestCase;
+use Polus\Adr\ActionDispatcher\HandlerActionDispatcher;
 use Polus\Adr\ActionHandler\EventActionHandler;
 use Polus\Adr\Actions\AbstractAction;
 use Polus\Adr\Actions\AbstractDomainAction;
@@ -19,6 +21,7 @@ use Polus\Adr\Interfaces\Resolver;
 use Polus\Adr\Interfaces\Responder;
 use Polus\Tests\Adr\Fixture\TestDomainPayload;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use TypeError;
 
 class EventActionHandlerTest extends TestCase
 {
@@ -30,7 +33,7 @@ class EventActionHandlerTest extends TestCase
             ->willReturn($this->createResponder(ExceptionDomainPayload::class));
         $resolver
             ->method('resolve')
-            ->willThrowException(new \DomainException());
+            ->willThrowException(new DomainException());
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
@@ -70,7 +73,7 @@ class EventActionHandlerTest extends TestCase
 
         $dispatcher = $this->createActionDispatcher($resolver, $eventDispatcher);
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
         $dispatcher->dispatch(
             new class extends AbstractAction implements EventAction {
@@ -186,7 +189,7 @@ class EventActionHandlerTest extends TestCase
         Resolver $resolver,
         EventDispatcherInterface $eventDispatcher
     ): ActionDispatcher {
-        $dispatcher = \Polus\Adr\ActionDispatcher\HandlerActionDispatcher::default(
+        $dispatcher = HandlerActionDispatcher::default(
             $resolver,
             new Psr17Factory(),
         );
