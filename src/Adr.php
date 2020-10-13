@@ -16,16 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * @method void get(string $route, Action $handler);
- * @method void put(string $route, Action $handler);
- * @method void post(string $route, Action $handler);
- * @method void delete(string $route, Action $handler);
- * @method void patch(string $route, Action $handler);
- * @method void head(string $route, Action $handler);
- * @method void attach(string $prefix, callable $callback);
- */
-class Adr implements RequestHandlerInterface
+class Adr implements RequestHandlerInterface, RouterCollection
 {
     private ResponseFactoryInterface $responseFactory;
     private MiddlewareFactory $middlewareFactory;
@@ -51,13 +42,6 @@ class Adr implements RequestHandlerInterface
         );
     }
 
-    public function __call($name, $arguments)
-    {
-        if (method_exists($this->routerContainer, $name)) {
-            $this->routerContainer->$name(...$arguments);
-        }
-    }
-
     public function getRouter(): RouterCollection
     {
         return $this->routerContainer;
@@ -80,5 +64,40 @@ class Adr implements RequestHandlerInterface
         );
 
         return $middlewareDispatcher->dispatch($request);
+    }
+
+    public function get(string $route, $handler)
+    {
+        $this->routerContainer->get($route, $handler);
+    }
+
+    public function put(string $route, $handler)
+    {
+        $this->routerContainer->put($route, $handler);
+    }
+
+    public function post(string $route, $handler)
+    {
+        $this->routerContainer->post($route, $handler);
+    }
+
+    public function delete(string $route, $handler)
+    {
+        $this->routerContainer->delete($route, $handler);
+    }
+
+    public function patch(string $route, $handler)
+    {
+        $this->routerContainer->patch($route, $handler);
+    }
+
+    public function head(string $route, $handler)
+    {
+        $this->routerContainer->head($route, $handler);
+    }
+
+    public function attach(string $prefix, callable $callback)
+    {
+        $this->routerContainer->attach($prefix, $callback);
     }
 }
