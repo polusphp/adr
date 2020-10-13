@@ -66,38 +66,43 @@ class Adr implements RequestHandlerInterface, RouterCollection
         return $middlewareDispatcher->dispatch($request);
     }
 
+    protected function routerContainerProxy(string $method, ...$args)
+    {
+        $this->routerContainer->$method(...$args);
+    }
+
     public function get(string $route, $handler)
     {
-        $this->routerContainer->get($route, $handler);
+        $this->routerContainerProxy('get', $route, $handler);
     }
 
     public function put(string $route, $handler)
     {
-        $this->routerContainer->put($route, $handler);
+        $this->routerContainerProxy('put', $route, $handler);
     }
 
     public function post(string $route, $handler)
     {
-        $this->routerContainer->post($route, $handler);
+        $this->routerContainerProxy('post', $route, $handler);
     }
 
     public function delete(string $route, $handler)
     {
-        $this->routerContainer->delete($route, $handler);
+        $this->routerContainerProxy('delete', $route, $handler);
     }
 
     public function patch(string $route, $handler)
     {
-        $this->routerContainer->patch($route, $handler);
+        $this->routerContainerProxy('patch', $route, $handler);
     }
 
     public function head(string $route, $handler)
     {
-        $this->routerContainer->head($route, $handler);
+        $this->routerContainerProxy('head', $route, $handler);
     }
 
     public function attach(string $prefix, callable $callback)
     {
-        $this->routerContainer->attach($prefix, $callback);
+        $this->routerContainerProxy('attach', $prefix, $callback);
     }
 }
