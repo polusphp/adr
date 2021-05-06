@@ -7,7 +7,6 @@ use Polus\Adr\Interfaces\DomainAction;
 abstract class AbstractDomainAction extends AbstractAction implements DomainAction
 {
     protected ?string $domain = null;
-    protected array $middlewares = [];
 
     public function getDomain(): ?string
     {

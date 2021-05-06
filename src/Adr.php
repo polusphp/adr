@@ -18,24 +18,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Adr implements RequestHandlerInterface, RouterCollection
 {
-    private ResponseFactoryInterface $responseFactory;
-    private MiddlewareFactory $middlewareFactory;
-    private ResponseHandler $responseHandler;
-    private RouterCollection $routerContainer;
     private ActionDispatcher $actionDispatcher;
 
     public function __construct(
-        ResponseFactoryInterface $responseFactory,
+        private ResponseFactoryInterface $responseFactory,
         Resolver $actionResolver,
-        RouterCollection $routerContainer,
-        ResponseHandler $responseHandler,
-        MiddlewareFactory $middlewareFactory,
+        private RouterCollection $routerContainer,
+        private ResponseHandler $responseHandler,
+        private MiddlewareFactory $middlewareFactory,
         ?ActionDispatcher $actionDispatcher = null
     ) {
-        $this->responseFactory = $responseFactory;
-        $this->middlewareFactory = $middlewareFactory;
-        $this->responseHandler = $responseHandler;
-        $this->routerContainer = $routerContainer;
         $this->actionDispatcher = $actionDispatcher ?? new MiddlewareActionDispatcher(
             HandlerActionDispatcher::default($actionResolver, $responseFactory),
             $this->middlewareFactory,

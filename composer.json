@@ -1,38 +1,41 @@
 {
-  "name": "polus/adr",
-  "description": "base for my version of adr",
-  "homepage": "https://github.com/polusphp/adr",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Andreas Sundqvist",
-      "email": "andreas@oak-valley.se"
+    "name": "polus/adr",
+    "description": "base for my version of adr",
+    "homepage": "https://github.com/polusphp/adr",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Sundqvist",
+            "email": "andreas@oak-valley.se"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0",
+        "psr/http-message": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-factory": "^1.0",
+        "polus/router": "^2.0",
+        "polus/middleware-dispatcher": "^2.0",
+        "payload-interop/payload-interop": "^1.0",
+        "psr/event-dispatcher": "^1.0",
+        "polus/adr-common": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "polus/relay-middleware-dispatcher": "^2.0",
+        "circli/event-dispatcher": "^2.2.0",
+        "nyholm/psr7": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Polus\\Adr\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Polus\\Tests\\Adr\\": "tests/"
+        }
     }
-  ],
-  "require": {
-    "php": ">=7.4.0",
-    "psr/http-message": "^1.0",
-    "psr/http-server-middleware": "^1.0",
-    "psr/http-factory": "^1.0",
-    "polus/router": "^2.0",
-    "polus/middleware-dispatcher": "^2.0",
-    "payload-interop/payload-interop": "^1.0",
-    "psr/event-dispatcher": "^1.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^8.0",
-    "polus/relay-middleware-dispatcher": "^2.0",
-    "circli/event-dispatcher": "^2.2.0",
-    "nyholm/psr7": "^1.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Polus\\Adr\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Polus\\Tests\\Adr\\": "tests/"
-    }
-  }
 }

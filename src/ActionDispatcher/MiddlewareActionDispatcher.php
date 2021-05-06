@@ -13,16 +13,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class MiddlewareActionDispatcher implements ActionDispatcher
 {
-    private MiddlewareFactory $middlewareFactory;
-    private ActionDispatcher $actionDispatcher;
-
     public function __construct(
-        ActionDispatcher $actionDispatcher,
-        MiddlewareFactory $middlewareFactory
-    ) {
-        $this->middlewareFactory = $middlewareFactory;
-        $this->actionDispatcher = $actionDispatcher;
-    }
+        private ActionDispatcher $actionDispatcher,
+        private MiddlewareFactory $middlewareFactory
+    ) {}
 
     public function dispatch(Action $action, ServerRequestInterface $request): ResponseInterface
     {
